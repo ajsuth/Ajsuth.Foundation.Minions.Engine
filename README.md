@@ -5,9 +5,17 @@ A custom plugin to extend minions functionality in Sitecore Experience Commerce.
 This solution has been adapted from a P.o.C. from XC 9.0.2. and is still a work in progress.
 
 ## Features
-Minions Dashboard
-Running Minions Entity View
-Extended Minion Properties
+
+### Minions Dashboard
+Provides an overview of minions. Last run time details will render for custom minions. See [Updating Minions to obtain run time data](updating-minions-to-obtain-run-time-data).
+
+### Running Minions Entity View
+Renders minions currently runnning.
+
+### Extended Minion Run Time Properties
+The ``MinionRunModel`` captures additional data for the last minion execution for display in the Running Minions and Minons Dashboard entity views.
+**Note:** The ``MinionRunModel`` is intended to replace the ``MinionRunResultsModel``. _Early P.o.C. days._
+**Note:** Currently only the last execution data is captured to avoid a memory leak.
 
 ## Installation Instructions
 
@@ -76,6 +84,93 @@ In Sitecore, go to the Role Manager
 3. Create or update a _User_ account with the **Dev Ops Administrator** role.
 
 **Note:** Until I customise the Business Tools to extend the **AccessByRole** with environment filters it is advised to not assign the primary **Administrator** role as a member of the **Dev Ops Administrator** role simply to avoid the Minions Dashboard from showing in the Authoring BizFx site.
+
+### Updating Minions to obtain run time data
+To track the last run time data of a minion, the minion will need to be overridden in your solution. The following instructions provides a guide for capturing this data.
+
+1. Create a new minion in your solution, inheriting from the desired minion if it's not custom.
+2. Add the following using statement to the minion class
+
+``using Ajsuth.Foundation.Minions.Engine.Models;``
+
+3. Override the ``Process()`` method, adding the following code to the beginning of the method.
+
+```
+public override async Task<MinionRunResultsModel> Process()
+{
+	var minionRunModel = new MinionRunModel();
+	this.Policy.Models.RemoveAll(m => m is MinionRunModel);
+	this.Policy.Models.Add(minionRunModel);
+	if (!(await this.ShouldProcess().ConfigureAwait(false)))
+	{
+		return new MinionRunResultsModel();
+	}
+
+	this.Environment.AddRunningMinion(this);
+	var result = await this.Execute().ConfigureAwait(false);
+	this.Environment.RemoveRunningMinion(this);
+
+	return result;
+}
+```
+
+4. Override the ``ShouldProcess()`` method with the following
+
+```
+protected override async Task<bool> ShouldProcess()
+{
+	// minion with the same configuration
+	if (this.Environment.RunningMinions.FirstOrDefault(p => p == this.Policy) != null)
+	{
+		var message = $"Minion '{this.Policy.FullyQualifiedName}' didn't run. There is already an instance of this minion running in the '{this.Environment.Name}' environment and watching the list '{this.Policy.ListToWatch}'.";
+		await this.GlobalContext.AddMessage(
+				this.Environment.GetPolicy<KnownResultCodes>().Warning,
+				"MinionAlreadyRunning",
+				new object[] { this.Policy.FullyQualifiedName, this.Environment.Name, this.Policy.ListToWatch },
+				message)
+			.ConfigureAwait(false);
+		var minionRunModel = this.Policy.Models.FirstOrDefault(m => m is MinionRunModel) as MinionRunModel;
+		minionRunModel.RunComplete("Complete", message);
+
+		return false;
+	}
+
+	// minion that process entities of the same type
+	var runningMinion = this.Environment.RunningMinions.FirstOrDefault(p => p.Entities.Intersect(this.Policy.Entities).Any());
+	if (runningMinion != null)
+	{
+		var entities = string.Join(",", runningMinion.Entities.Intersect(this.Policy.Entities));
+		var message = $"Minion '{this.Policy.FullyQualifiedName}' (ListToWatch:{this.Policy.ListToWatch}) didn't run. Minion '{runningMinion.FullyQualifiedName}' (ListToWatch:{runningMinion.ListToWatch}) is processing the same type of entities ({entities}) in the '{this.Environment.Name}' environment running.";
+		await this.GlobalContext.AddMessage(
+				this.Environment.GetPolicy<KnownResultCodes>().Warning,
+				"MinionProcessingSameEntities",
+				new object[] { this.Policy.FullyQualifiedName, this.Environment.Name },
+				message)
+			.ConfigureAwait(false);
+		var minionRunModel = this.Policy.Models.FirstOrDefault(m => m is MinionRunModel) as MinionRunModel;
+		minionRunModel.RunComplete("Complete", message);
+
+		return false;
+	}
+
+	return true;
+}
+```
+
+5. Override the ``Execute()`` method, inserting the following at the beginning of the method.
+
+``var minionRunModel = this.Policy.Models.FirstOrDefault(m => m is MinionRunModel) as MinionRunModel;``
+
+6. Add the ``minionRunModel.RunComplete()`` method wherever the minion returns the ``MinionRunResultsModel``, providing the appropriate status and message. e.g.
+
+``minionRunModel.RunComplete("Complete", "Minion completed successfully");``
+
+7. For minions running batches, update the ``ItemsProcessed`` property to align with the count for the ``MinionRunResultsModel``. e.g.
+
+```
+indexedItemsCount += entitiesToIndex.Count;
+minionRunModel.ItemsProcessed += entitiesToIndex.Count;
+```
 
 ## Known Issues
 | Feature                 | Description | Issue |
