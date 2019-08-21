@@ -172,6 +172,11 @@ indexedItemsCount += entitiesToIndex.Count;
 minionRunModel.ItemsProcessed += entitiesToIndex.Count;
 ```
 
+8. Update the minion configuration in the _**Minions**_ policy set.
+9. Deploy the solution
+10. Run Bootstrap
+11. Restart the Minions Commerce Engine.
+
 ## Known Issues
 | Feature                 | Description | Issue |
 | ----------------------- | ----------- | ----- |
