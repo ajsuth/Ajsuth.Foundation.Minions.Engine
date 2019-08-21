@@ -10,7 +10,7 @@ The current code base is XC 9.1 and hasn't been tested on other XC versions.
 ## Features
 
 ### Minions Dashboard
-Provides an overview of minions. Last run time details will render for custom minions. See [Updating Minions to obtain run time data](updating-minions-to-obtain-run-time-data).
+Provides an overview of minions. Last run time details will render for custom minions. See [Updating Minions to obtain run time data](#updating-minions-to-obtain-run-time-data).
 ![Minions Dashboard](/images/minions-dashboard.png)
 
 ### Running Minions Entity View
