@@ -8,13 +8,24 @@ This solution has been adapted from a P.o.C. from XC 9.0.2. and is still a work 
 
 ### Minions Dashboard
 Provides an overview of minions. Last run time details will render for custom minions. See [Updating Minions to obtain run time data](updating-minions-to-obtain-run-time-data).
+![Minions Dashboard](/images/minions-dashboard.png)
 
 ### Running Minions Entity View
 Renders minions currently runnning.
+![Running Minions](/images/running-minions.png)
+
+### Minion Actions
+Added minion actions
+
+**Note:** Add/Edit/Remove minions are not fully tested and not intended for production as it is recommended that policies be managed and bootstrapped from the policy configuration files for policy back ups and version control.
+
+![Minion Dashboard Actions](/images/minion-dashboard-actions.png)
 
 ### Extended Minion Run Time Properties
 The ``MinionRunModel`` captures additional data for the last minion execution for display in the Running Minions and Minons Dashboard entity views.
+
 **Note:** The ``MinionRunModel`` is intended to replace the ``MinionRunResultsModel``. _Early P.o.C. days._
+
 **Note:** Currently only the last execution data is captured to avoid a memory leak.
 
 ## Installation Instructions
