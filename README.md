@@ -4,6 +4,9 @@ A custom plugin to extend minions functionality in Sitecore Experience Commerce.
 ** WARNING **
 This solution has been adapted from a P.o.C. from XC 9.0.2. and is still a work in progress.
 
+## Supported Sitecore Experience Commerce Versions
+The current code base is XC 9.1 and hasn't been tested on other XC versions.
+
 ## Features
 
 ### Minions Dashboard
