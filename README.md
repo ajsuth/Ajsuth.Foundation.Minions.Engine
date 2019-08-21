@@ -192,6 +192,7 @@ minionRunModel.ItemsProcessed += entitiesToIndex.Count;
 | Feature                 | Description | Issue |
 | ----------------------- | ----------- | ----- |
 | Add/Edit/Delete Minion Actions     | Original code migrated from 9.0.2, which hasn't been updated or verified. | N/A |
+| Last Run Lapsed Time     | Last Run Lapsed Time not rendering current lapsed time for in progress minion. | N/A |
 
 ## Disclaimer
 The code provided in this repository is sample code only. It is not intended for production usage and not endorsed by Sitecore.
