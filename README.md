@@ -47,12 +47,35 @@ The Business Tools (Bizfx) website that is installed with via SIF and ARM templa
 1. Download the repository.
 2. Add the **Ajsuth.Foundation.Minions.Engine.csproj** to the _**Sitecore Commerce Engine**_ solution.
 3. In the _**Sitecore Commerce Engine**_ project, add a reference to the **Ajsuth.Foundation.Minions.Engine** project.
-4. Run the _**Sitecore Commerce Engine**_ from Visual Studio or deploy the solution and run from IIS.
-5. Run the **Bootstrap** command on the _**Sitecore Commerce Engine**_. 
-6. Restart all commerce engine websites.
+4. Add the following to the _**AccessByRole**_ policy set
+
+``{
+	"$type": "Sitecore.Commerce.EntityViews.ActionRoleModel, Sitecore.Commerce.Plugin.Views",
+	"View": "MinionsDashboard",
+	"Role": "sitecore\\Dev Ops Manager"
+}``
+
+5. Add the following to the _**Minions**_ environment policy set
+
+``{
+	"$type": "Sitecore.Commerce.EntityViews.ActionRoleModel, Sitecore.Commerce.Plugin.Views",
+	"View": "MinionsDashboard",
+	"Role": "sitecore\\Dev Ops Manager"
+}``
+
+6. Deploy the solution and run from IIS.
+7. Run the **Bootstrap** command on the _**Sitecore Commerce Engine**_. 
+8. Restart all commerce engine websites.
 
 ### Configuring Roles in Sitecore for Minions
-The Minions dashboard is only intended to be visible within BizFx under the Minions environment. Although this configuration is handled via the access roles configured in the Commerce Engine solution, the roles need to be configured in Sitecore. A new Dev Ops Adminstrator role will be created 
+The Minions dashboard is only intended to be visible within BizFx under the Minions environment. Although this configuration is handled via the access roles configured in the Commerce Engine solution, the roles need to be configured in Sitecore. A new Dev Ops Adminstrator role will be created.
+
+In Sitecore, go to the Role Manager
+1. Create Role **Dev Ops Administrator** in the _sitecore_ domain.
+2. Set the role to be a member of **sitecore\Commerce Business User**.
+3. Create or update a _User_ account with the **Dev Ops Administrator** role.
+
+**Note:** Until I customise the Business Tools to extend the **AccessByRole** with environment filters it is advised to not assign the primary **Administrator** role as a member of the **Dev Ops Administrator** role simply to avoid the Minions Dashboard from showing in the Authoring BizFx site.
 
 ## Known Issues
 | Feature                 | Description | Issue |
