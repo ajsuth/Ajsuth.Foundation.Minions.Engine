@@ -24,5 +24,11 @@ namespace Ajsuth.Foundation.Minions.Engine.Models
 			Message = message;
 			CompletedTime = DateTime.UtcNow;
 		}
+
+		public void RunComplete(string status, int itemsProcessed, string message)
+		{
+			ItemsProcessed = itemsProcessed;
+			RunComplete(status, message);
+		}
 	}
 }

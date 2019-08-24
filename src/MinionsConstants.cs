@@ -11,10 +11,20 @@
 		public static class Pipelines
 		{
 			/// <summary>
+			/// The running minions pipeline name.
+			/// </summary>
+			public const string RunningMinions = "Minions.Pipeline.RunningMinions";
+
+			/// <summary>
 			/// The names of the minions pipeline blocks.
 			/// </summary>
 			public static class Blocks
 			{
+				/// <summary>
+				/// The configure ops service api block name.
+				/// </summary>
+				public const string ConfigureOpsServiceApi = "Minions.Block.ConfigureOpsServiceApiBlock";
+
 				/// <summary>
 				/// The do action add or edit minion block name.
 				/// </summary>
@@ -44,11 +54,16 @@
 				/// The get minions navigation view block name.
 				/// </summary>
 				public const string GetMinionsNavigationView = "Minions.Block.GetMinionsNavigationView";
-				
+
 				/// <summary>
 				/// The populate minions view actions block name.
 				/// </summary>
 				public const string PopulateMinionsViewActions = "Minions.Block.PopulateMinionsViewActions";
+
+				/// <summary>
+				/// The running minions block name.
+				/// </summary>
+				public const string RunningMinions = "Minions.Block.RunningMinions";
 			}
 		}
 	}

@@ -31,7 +31,11 @@ namespace Ajsuth.Foundation.Minions.Engine.Policies
             services.RegisterAllPipelineBlocks(assembly);
 
 			services.Sitecore().Pipelines(config => config
-			
+
+				.ConfigurePipeline<IConfigureOpsServiceApiPipeline>(pipeline => pipeline
+					.Add<Pipelines.Blocks.ConfigureOpsServiceApiBlock>()
+				)
+
 				.ConfigurePipeline<IBizFxNavigationPipeline>(pipeline => pipeline
 					.Add<Pipelines.Blocks.GetMinionsNavigationViewBlock>().After<GetNavigationViewBlock>()
 				)
@@ -50,6 +54,10 @@ namespace Ajsuth.Foundation.Minions.Engine.Policies
 					.Add<Pipelines.Blocks.DoActionRunMinionBlock>().After<ValidateEntityVersionBlock>()
 					.Add<Pipelines.Blocks.DoActionAddOrEditMinionBlock>().After<ValidateEntityVersionBlock>()
 					.Add<Pipelines.Blocks.DoActionDeleteMinionBlock>().After<ValidateEntityVersionBlock>()
+				)
+
+				.AddPipeline<Pipelines.IRunningMinionsPipeline, Pipelines.RunningMinionsPipeline>(pipeline => pipeline
+					.Add<Pipelines.Blocks.RunningMinionsBlock>()
 				)
 			);
 

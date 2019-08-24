@@ -13,10 +13,13 @@
   <ItemGroup>
     <Compile Remove="Components\**" />
     <Compile Remove="Entities\**" />
+    <Compile Remove="Pipelines\Arguments\**" />
     <EmbeddedResource Remove="Components\**" />
     <EmbeddedResource Remove="Entities\**" />
+    <EmbeddedResource Remove="Pipelines\Arguments\**" />
     <None Remove="Components\**" />
     <None Remove="Entities\**" />
+    <None Remove="Pipelines\Arguments\**" />
   </ItemGroup>
 
   <ItemGroup>
@@ -25,7 +28,6 @@
 		  <Version>3.0.17</Version>
 	  </PackageReference>
 	  <PackageReference Include="Sitecore.Commerce.Plugin.BusinessUsers" Version="3.0.17" />
-	  <PackageReference Include="Sitecore.Commerce.Plugin.Search" Version="3.0.11" />
 	  <PackageReference Include="Sitecore.Commerce.Plugin.Views" Version="3.0.17" />
   </ItemGroup>
 
@@ -44,10 +46,5 @@
   <ItemGroup Condition=" '$(TargetFramework)' == 'net462' ">
     <Reference Include="System.Transactions" />
     <Reference Include="Microsoft.CSharp" />
-  </ItemGroup>
-
-  <ItemGroup>
-    <Folder Include="Controllers\" />
-    <Folder Include="Pipelines\Arguments\" />
   </ItemGroup>
 </Project>

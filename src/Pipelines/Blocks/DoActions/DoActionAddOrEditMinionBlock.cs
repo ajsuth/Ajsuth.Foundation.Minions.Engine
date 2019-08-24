@@ -44,7 +44,7 @@ namespace Ajsuth.Foundation.Minions.Engine.Pipelines.Blocks
 
 			context.CommerceContext.Environment = context.CommerceContext.GlobalEnvironment;
 
-			await _commerceCommander.Command<Commands.AddPolicyToEntityCommand>().Process(context.CommerceContext, entityId, minionPolicy, environmentName);
+			await _commerceCommander.Command<AddPolicyToEntityCommand>().Process(context.CommerceContext, entityId, minionPolicy, environmentName);
 
 			return entityView;
 		}

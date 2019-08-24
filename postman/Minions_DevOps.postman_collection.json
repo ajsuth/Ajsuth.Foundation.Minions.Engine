@@ -1,0 +1,49 @@
+{
+	"info": {
+		"_postman_id": "94213d87-25d3-4ea1-8ca8-b4a09b4d1963",
+		"name": "Minions_DevOps",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+	},
+	"item": [
+		{
+			"name": "Running Minions",
+			"protocolProfileBehavior": {
+				"disableBodyPruning": true
+			},
+			"request": {
+				"method": "GET",
+				"header": [
+					{
+						"key": "Content-Type",
+						"value": "application/json",
+						"type": "text"
+					},
+					{
+						"key": "Authorization",
+						"value": "{{SitecoreIdToken}}"
+					},
+					{
+						"key": "Environment",
+						"value": "{{MinionsEnvironment}}",
+						"type": "text"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": ""
+				},
+				"url": {
+					"raw": "{{MinionsHost}}/{{OpsApi}}/RunningMinions()",
+					"host": [
+						"{{MinionsHost}}"
+					],
+					"path": [
+						"{{OpsApi}}",
+						"RunningMinions()"
+					]
+				}
+			},
+			"response": []
+		}
+	]
+}
