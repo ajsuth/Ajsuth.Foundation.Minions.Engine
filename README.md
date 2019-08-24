@@ -9,12 +9,15 @@ The current code base is XC 9.1 and hasn't been tested on other XC versions.
 
 ## Features
 
+### Running Minions API
+The ``/commerceops/RunningMinions()`` returns a list of minion policies for minions that are currently running.
+
 ### Minions Dashboard
 Provides an overview of minions. Last run time details will render for custom minions. See [Updating Minions to obtain run time data](#updating-minions-to-obtain-run-time-data).
 ![Minions Dashboard](/images/minions-dashboard.png)
 
 ### Running Minions Entity View
-Renders minions currently runnning.
+Renders currently running minions in BizFx.
 ![Running Minions](/images/running-minions.png)
 
 ### Minion Actions
