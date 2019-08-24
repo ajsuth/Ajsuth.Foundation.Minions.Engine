@@ -4,17 +4,31 @@ A custom plugin to extend minions functionality in Sitecore Experience Commerce.
 ** WARNING **
 This solution has been adapted from a P.o.C. from XC 9.0.2. and is still a work in progress.
 
+## Supported Sitecore Experience Commerce Versions
+The current code base is XC 9.1 and hasn't been tested on other XC versions.
+
 ## Features
 
 ### Minions Dashboard
-Provides an overview of minions. Last run time details will render for custom minions. See [Updating Minions to obtain run time data](updating-minions-to-obtain-run-time-data).
+Provides an overview of minions. Last run time details will render for custom minions. See [Updating Minions to obtain run time data](#updating-minions-to-obtain-run-time-data).
+![Minions Dashboard](/images/minions-dashboard.png)
 
 ### Running Minions Entity View
 Renders minions currently runnning.
+![Running Minions](/images/running-minions.png)
+
+### Minion Actions
+Added minion actions
+
+**Note:** Add/Edit/Remove minions are not fully tested and not intended for production as it is recommended that policies be managed and bootstrapped from the policy configuration files for policy back ups and version control.
+
+![Minion Dashboard Actions](/images/minion-dashboard-actions.png)
 
 ### Extended Minion Run Time Properties
 The ``MinionRunModel`` captures additional data for the last minion execution for display in the Running Minions and Minons Dashboard entity views.
+
 **Note:** The ``MinionRunModel`` is intended to replace the ``MinionRunResultsModel``. _Early P.o.C. days._
+
 **Note:** Currently only the last execution data is captured to avoid a memory leak.
 
 ## Installation Instructions
@@ -181,6 +195,7 @@ minionRunModel.ItemsProcessed += entitiesToIndex.Count;
 | Feature                 | Description | Issue |
 | ----------------------- | ----------- | ----- |
 | Add/Edit/Delete Minion Actions     | Original code migrated from 9.0.2, which hasn't been updated or verified. | N/A |
+| Last Run Lapsed Time     | Last Run Lapsed Time not rendering current lapsed time for in progress minion. | N/A |
 
 ## Disclaimer
 The code provided in this repository is sample code only. It is not intended for production usage and not endorsed by Sitecore.
