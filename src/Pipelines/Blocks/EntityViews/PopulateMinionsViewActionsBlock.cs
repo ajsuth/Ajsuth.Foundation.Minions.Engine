@@ -16,7 +16,7 @@ namespace Ajsuth.Foundation.Minions.Engine.Pipelines.Blocks
 			var viewsPolicy = context.GetPolicy<KnownMinionsViewsPolicy>();
 
 			if (string.IsNullOrEmpty(entityView?.Name) ||
-					!entityView.Name.Equals(viewsPolicy.Minions, StringComparison.OrdinalIgnoreCase))
+					!entityView.Name.Equals(viewsPolicy.EnvironmentMinions, StringComparison.OrdinalIgnoreCase))
 			{
 				return await Task.FromResult(entityView).ConfigureAwait(false);
 			}

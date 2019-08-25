@@ -7,14 +7,14 @@ namespace Ajsuth.Foundation.Minions.Engine.Policies
 		public KnownMinionsViewsPolicy()
 		{
 			MinionsDashboard = nameof(MinionsDashboard);
-			Minions = nameof(Minions);
+			EnvironmentMinions = nameof(EnvironmentMinions);
 			RunningMinions = nameof(RunningMinions);
 			Details = nameof(Details);
 		}
 
 		public string MinionsDashboard { get; set; }
 
-		public string Minions { get; set; }
+		public string EnvironmentMinions { get; set; }
 
 		public string RunningMinions { get; set; }
 

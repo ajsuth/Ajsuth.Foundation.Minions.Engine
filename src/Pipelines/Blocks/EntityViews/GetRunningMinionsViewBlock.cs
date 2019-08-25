@@ -57,7 +57,7 @@ namespace Ajsuth.Foundation.Minions.Engine.Pipelines.Blocks
 				minionView.Properties.Add(new ViewProperty()
 				{
 					Name = "Minion Start Time",
-					RawValue = minionRunModel?.LastStartTime,
+					RawValue = minionRunModel?.LastStartTime.ToString(),
 					IsReadOnly = true
 				});
 				minionView.Properties.Add(new ViewProperty()

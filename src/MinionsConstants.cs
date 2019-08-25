@@ -11,6 +11,11 @@
 		public static class Pipelines
 		{
 			/// <summary>
+			/// The environment minions pipeline name.
+			/// </summary>
+			public const string EnvironmentMinions = "Minions.Pipeline.EnvironmentMinions";
+
+			/// <summary>
 			/// The running minions pipeline name.
 			/// </summary>
 			public const string RunningMinions = "Minions.Pipeline.RunningMinions";
@@ -39,6 +44,11 @@
 				/// The do action run minion block name.
 				/// </summary>
 				public const string DoActionRunMinion = "Minions.Block.DoActionRunMinion";
+
+				/// <summary>
+				/// The environment minions block name.
+				/// </summary>
+				public const string EnvironmentMinions = "Minions.Block.EnvironmentMinions";
 
 				/// <summary>
 				/// The get minion details view block name.

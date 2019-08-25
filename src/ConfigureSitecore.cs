@@ -56,6 +56,10 @@ namespace Ajsuth.Foundation.Minions.Engine.Policies
 					.Add<Pipelines.Blocks.DoActionDeleteMinionBlock>().After<ValidateEntityVersionBlock>()
 				)
 
+				.AddPipeline<Pipelines.IEnvironmentMinionsPipeline, Pipelines.EnvironmentMinionsPipeline>(pipeline => pipeline
+					.Add<Pipelines.Blocks.EnvironmentMinionsBlock>()
+				)
+
 				.AddPipeline<Pipelines.IRunningMinionsPipeline, Pipelines.RunningMinionsPipeline>(pipeline => pipeline
 					.Add<Pipelines.Blocks.RunningMinionsBlock>()
 				)

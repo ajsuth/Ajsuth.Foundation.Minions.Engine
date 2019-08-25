@@ -50,6 +50,9 @@ namespace Ajsuth.Foundation.Minions.Engine.Pipelines.Blocks
 
 			// Add unbound functions
 
+			var environmentMinionsFunction = modelBuilder.Function("EnvironmentMinions");
+			environmentMinionsFunction.ReturnsCollection<MinionPolicy>();
+
 			var runningMinionsFunction = modelBuilder.Function("RunningMinions");
 			runningMinionsFunction.ReturnsCollection<MinionPolicy>();
 

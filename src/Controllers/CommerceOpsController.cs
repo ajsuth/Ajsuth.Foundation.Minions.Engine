@@ -34,6 +34,20 @@ namespace Ajsuth.Foundation.Minions.Engine.Controllers
         }
 
 		/// <summary>
+		/// Environment minions.
+		/// </summary>
+		/// <returns>A list of <see cref="MinionPolicy" /></returns>
+		[HttpGet]
+		[Route("EnvironmentMinions")]
+		public async Task<IActionResult> EnvironmentMinions()
+		{
+			var result = await this.Command<EnvironmentMinionsCommand>().Process(this.CurrentContext);
+			return result == null
+				? new ObjectResult(new List<MinionPolicy>())
+				: new ObjectResult(result);
+		}
+
+		/// <summary>
 		/// Running minions.
 		/// </summary>
 		/// <returns>A list of <see cref="MinionPolicy" /></returns>

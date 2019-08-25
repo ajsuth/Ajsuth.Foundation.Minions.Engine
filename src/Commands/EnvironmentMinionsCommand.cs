@@ -1,5 +1,5 @@
 ﻿// --------------------------------------------------------------------------------------------------------------------
-// <copyright file="RunningMinionsCommand.cs" company="Sitecore Corporation">
+// <copyright file="EnvironmentMinionsCommand.cs" company="Sitecore Corporation">
 //   Copyright (c) Sitecore Corporation 1999-2019
 // </copyright>
 // --------------------------------------------------------------------------------------------------------------------
@@ -13,11 +13,11 @@ namespace Ajsuth.Foundation.Minions.Engine.Commands
 	using System.Collections.Generic;
 	using System.Threading.Tasks;
 
-    /// <inheritdoc />
-    /// <summary>
-    /// Defines the RunningMinionsCommand command.
-    /// </summary>
-    public class RunningMinionsCommand : CommerceCommand
+	/// <inheritdoc />
+	/// <summary>
+	/// Defines the EnvironmentMinionsCommand command.
+	/// </summary>
+	public class EnvironmentMinionsCommand : CommerceCommand
     {
         /// <summary>
         /// Gets or sets the commander.
@@ -27,15 +27,15 @@ namespace Ajsuth.Foundation.Minions.Engine.Commands
         /// </value>
         protected CommerceCommander Commander { get; set; }
 
-        /// <inheritdoc />
-        /// <summary>
-        /// Initializes a new instance of the <see cref="T:Ajsuth.Foundation.Minions.Engine.Commands.RunningMinionsCommand" /> class.
-        /// </summary>
-        /// <param name="pipeline">
-        /// The pipeline.
-        /// </param>
-        /// <param name="serviceProvider">The service provider</param>
-        public RunningMinionsCommand(CommerceCommander commander, IServiceProvider serviceProvider) : base(serviceProvider)
+		/// <inheritdoc />
+		/// <summary>
+		/// Initializes a new instance of the <see cref="T:Ajsuth.Foundation.Minions.Engine.Commands.EnvironmentMinionsCommand" /> class.
+		/// </summary>
+		/// <param name="pipeline">
+		/// The pipeline.
+		/// </param>
+		/// <param name="serviceProvider">The service provider</param>
+		public EnvironmentMinionsCommand(CommerceCommander commander, IServiceProvider serviceProvider) : base(serviceProvider)
         {
             this.Commander = commander;
         }
@@ -53,7 +53,7 @@ namespace Ajsuth.Foundation.Minions.Engine.Commands
         {
             using (var activity = CommandActivity.Start(commerceContext, this))
             {
-				return await Commander.Pipeline<IRunningMinionsPipeline>().Run(string.Empty, commerceContext.PipelineContextOptions).ConfigureAwait(false);
+				return await Commander.Pipeline<IEnvironmentMinionsPipeline>().Run(string.Empty, commerceContext.PipelineContextOptions).ConfigureAwait(false);
             }
         }
     }

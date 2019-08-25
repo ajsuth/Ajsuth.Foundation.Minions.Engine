@@ -34,7 +34,7 @@ namespace Ajsuth.Foundation.Minions.Engine.Pipelines.Blocks
 
 			var minionsView = new EntityView()
 			{
-				Name = viewsPolicy.Minions,
+				Name = viewsPolicy.EnvironmentMinions,
 				Icon = "calendar_clock",
 				UiHint = "List"
 			};
