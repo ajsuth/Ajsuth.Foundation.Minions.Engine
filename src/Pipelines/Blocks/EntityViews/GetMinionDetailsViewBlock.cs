@@ -4,7 +4,6 @@ using Sitecore.Commerce.EntityViews;
 using Sitecore.Framework.Conditions;
 using Sitecore.Framework.Pipelines;
 using System;
-using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 
@@ -17,8 +16,8 @@ namespace Ajsuth.Foundation.Minions.Engine.Pipelines.Blocks
 			: base(null)
 		{
 		}
-
-		public override Task<EntityView> Run(EntityView entityView, CommercePipelineExecutionContext context)
+		
+		public override async Task<EntityView> Run(EntityView entityView, CommercePipelineExecutionContext context)
 		{
 			Condition.Requires(entityView).IsNotNull($"{Name}: The argument cannot be null");
 
@@ -31,21 +30,21 @@ namespace Ajsuth.Foundation.Minions.Engine.Pipelines.Blocks
 					!(entityViewArgument.ForAction.Equals(actionsPolicy.AddMinion, StringComparison.OrdinalIgnoreCase) ||
 					isEditAction))
 			{
-				return Task.FromResult(entityView);
+				return await Task.FromResult(entityView).ConfigureAwait(false);
 			}
 			
 			var minionPolicy = isEditAction ? GetMinionPolicy(entityView.ItemId, context) : null;
 			PopulateDetails(entityView, minionPolicy, context);
 
-			return Task.FromResult(entityView);
+			return await Task.FromResult(entityView).ConfigureAwait(false);
 		}
 
-		private MinionPolicy GetMinionPolicy(string policyId, CommercePipelineExecutionContext context)
+		protected virtual MinionPolicy GetMinionPolicy(string policyId, CommercePipelineExecutionContext context)
 		{
 			return context.CommerceContext.Environment.GetPolicies<MinionPolicy>().FirstOrDefault(p => p.PolicyId == policyId);
 		}
 
-		private void PopulateDetails(EntityView view, MinionPolicy minionPolicy, CommercePipelineExecutionContext context)
+		protected virtual void PopulateDetails(EntityView view, MinionPolicy minionPolicy, CommercePipelineExecutionContext context)
 		{
 			if (view == null)
 			{
@@ -83,7 +82,7 @@ namespace Ajsuth.Foundation.Minions.Engine.Pipelines.Blocks
 			view.Properties.Add(new ViewProperty() { Name = nameof(minionPolicy.WakeupInterval), RawValue = minionPolicy.WakeupInterval != null ? ((TimeSpan)minionPolicy.WakeupInterval).ToString("c") : "", IsRequired = false });
 			view.Properties.Add(new ViewProperty() { Name = nameof(minionPolicy.ItemsPerBatch), RawValue = minionPolicy.ItemsPerBatch });
 			view.Properties.Add(new ViewProperty() { Name = nameof(minionPolicy.SleepBetweenBatches), RawValue = minionPolicy.SleepBetweenBatches });
-			
+
 		}
 	}
 }

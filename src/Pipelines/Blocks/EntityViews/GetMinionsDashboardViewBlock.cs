@@ -27,7 +27,7 @@ namespace Ajsuth.Foundation.Minions.Engine.Pipelines.Blocks
 			if (string.IsNullOrEmpty(entityViewArgument?.ViewName) ||
 					!entityViewArgument.ViewName.Equals(viewsPolicy.MinionsDashboard, StringComparison.OrdinalIgnoreCase))
 			{
-				return entityView;
+				return await Task.FromResult(entityView).ConfigureAwait(false);
 			}
 
 			entityView.Icon = "windows";
@@ -56,7 +56,7 @@ namespace Ajsuth.Foundation.Minions.Engine.Pipelines.Blocks
 				}
 			}
 
-			return await Task.FromResult(entityView);
+			return await Task.FromResult(entityView).ConfigureAwait(false);
 		}
 
 		protected virtual EntityView CreateMinionEntityView(EntityView minionsView, MinionPolicy minionPolicy, CommercePipelineExecutionContext context)
@@ -125,8 +125,8 @@ namespace Ajsuth.Foundation.Minions.Engine.Pipelines.Blocks
 			});
 			minionView.Properties.Add(new ViewProperty()
 			{
-				Name = "Last Run Lapsed Time",
-				RawValue = minionRunModel?.CompletedTime != null ? (minionRunModel?.CompletedTime - minionRunModel?.LastStartTime).ToString() : "N/A",
+				Name = "Run Lapsed Time",
+				RawValue = minionRunModel != null ? ((minionRunModel.CompletedTime ?? DateTime.UtcNow) - minionRunModel.LastStartTime).ToString() : "N/A",
 				IsReadOnly = true
 			});
 			minionView.Properties.Add(new ViewProperty()
@@ -141,12 +141,6 @@ namespace Ajsuth.Foundation.Minions.Engine.Pipelines.Blocks
 				RawValue = minionRunModel?.Message ?? "N/A",
 				IsReadOnly = true
 			});
-			//minionView.Properties.Add(new ViewProperty()
-			//{
-			//	Name = "Minion In Progress",
-			//	RawValue = context.CommerceContext.Environment.RunningMinions.FirstOrDefault(minion => minion.PolicyId == minionPolicy.PolicyId) != null,
-			//	IsReadOnly = true
-			//});
 
 			return minionView;
 		}

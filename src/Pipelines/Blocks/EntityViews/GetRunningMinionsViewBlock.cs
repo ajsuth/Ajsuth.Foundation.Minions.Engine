@@ -27,7 +27,7 @@ namespace Ajsuth.Foundation.Minions.Engine.Pipelines.Blocks
 			if (string.IsNullOrEmpty(entityViewArgument?.ViewName) ||
 					!entityViewArgument.ViewName.Equals(viewsPolicy.MinionsDashboard, StringComparison.OrdinalIgnoreCase))
 			{
-				return entityView;
+				return await Task.FromResult(entityView).ConfigureAwait(false);
 			}
 
 			var runningMinionsView = new EntityView()
@@ -62,6 +62,12 @@ namespace Ajsuth.Foundation.Minions.Engine.Pipelines.Blocks
 				});
 				minionView.Properties.Add(new ViewProperty()
 				{
+					Name = "Lapsed Time",
+					RawValue = minionRunModel != null ? (DateTime.UtcNow - minionRunModel.LastStartTime).ToString() : "MinionRunModel missing",
+					IsReadOnly = true
+				});
+				minionView.Properties.Add(new ViewProperty()
+				{
 					Name = "Items Processed",
 					RawValue = minionRunModel?.ItemsProcessed,
 					IsReadOnly = true
@@ -76,7 +82,7 @@ namespace Ajsuth.Foundation.Minions.Engine.Pipelines.Blocks
 				runningMinionsView.ChildViews.Add(minionView);
 			}
 
-			return await Task.FromResult(entityView);
+			return await Task.FromResult(entityView).ConfigureAwait(false);
 		}
 	}
 }

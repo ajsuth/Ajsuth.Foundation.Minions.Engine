@@ -4,7 +4,6 @@ using Sitecore.Commerce.Core.Commands;
 using Sitecore.Commerce.EntityViews;
 using Sitecore.Framework.Pipelines;
 using System;
-using System.Linq;
 using System.Threading.Tasks;
 
 namespace Ajsuth.Foundation.Minions.Engine.Pipelines.Blocks
@@ -12,12 +11,12 @@ namespace Ajsuth.Foundation.Minions.Engine.Pipelines.Blocks
 	[PipelineDisplayName(MinionsConstants.Pipelines.Blocks.DoActionDeleteMinion)]
 	public class DoActionDeleteMinionBlock : PipelineBlock<EntityView, EntityView, CommercePipelineExecutionContext>
 	{
-		private readonly CommerceCommander _commerceCommander;
+		protected readonly CommerceCommander Commander;
 
 		public DoActionDeleteMinionBlock(CommerceCommander commerceCommander)
 		  : base(null)
 		{
-			_commerceCommander = commerceCommander;
+			Commander = commerceCommander;
 		}
 
 		public override async Task<EntityView> Run(EntityView entityView, CommercePipelineExecutionContext context)
@@ -32,16 +31,17 @@ namespace Ajsuth.Foundation.Minions.Engine.Pipelines.Blocks
 			context.CommerceContext.Environment = context.CommerceContext.GlobalEnvironment;
 			var environmentName = context.CommerceContext.GlobalEnvironment.Name;
 
-			await _commerceCommander.Command<RemovePolicyFromEntityCommand>().Process(context.CommerceContext,
-																						entityId,
-																						GetMinionPolicyFullyQualifiedName(),
-																						entityView.ItemId,
-																						environmentName);
+			await Commander.Command<RemovePolicyFromEntityCommand>().Process(
+				context.CommerceContext,
+				entityId,
+				GetMinionPolicyFullyQualifiedName(),
+				entityView.ItemId,
+				environmentName).ConfigureAwait(false);
 
 			return entityView;
 		}
 
-		private string GetMinionPolicyFullyQualifiedName()
+		protected virtual string GetMinionPolicyFullyQualifiedName()
 		{
 			return $"{typeof(MinionPolicy).FullName}, {typeof(MinionPolicy).Namespace}";
 		}

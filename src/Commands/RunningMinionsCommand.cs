@@ -40,19 +40,16 @@ namespace Ajsuth.Foundation.Minions.Engine.Commands
             this.Commander = commander;
         }
 
-        /// <summary>
-        /// The process of the command
-        /// </summary>
-        /// <param name="commerceContext">
-        /// The commerce context
-        /// </param>
-        /// <param name="parameter">
-        /// The parameter for the command
-        /// </param>
-        /// <returns>
-        /// The <see cref="Task"/>.
-        /// </returns>
-        public async Task<IEnumerable<MinionPolicy>> Process(CommerceContext commerceContext)
+		/// <summary>
+		/// The process of the command
+		/// </summary>
+		/// <param name="commerceContext">
+		/// The commerce context
+		/// </param>
+		/// <returns>
+		/// The list of <see cref="MinionPolicy"/>.
+		/// </returns>
+		public async Task<IEnumerable<MinionPolicy>> Process(CommerceContext commerceContext)
         {
             using (var activity = CommandActivity.Start(commerceContext, this))
             {

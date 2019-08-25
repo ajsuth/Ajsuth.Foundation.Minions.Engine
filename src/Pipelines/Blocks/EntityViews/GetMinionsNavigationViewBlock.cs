@@ -15,13 +15,13 @@ namespace Ajsuth.Foundation.Minions.Engine.Pipelines.Blocks
 		{
 		}
 
-		public override Task<EntityView> Run(EntityView entityView, CommercePipelineExecutionContext context)
+		public override async Task<EntityView> Run(EntityView entityView, CommercePipelineExecutionContext context)
 		{
 			Condition.Requires(entityView).IsNotNull($"{Name}: The argument cannot be null.");
 
 			if (entityView.Name != "ToolsNavigation")
 			{
-				return Task.FromResult(entityView);
+				return await Task.FromResult(entityView).ConfigureAwait(false);
 			}
 
 			var dashboardName = context.GetPolicy<KnownMinionsViewsPolicy>().MinionsDashboard;
@@ -33,7 +33,7 @@ namespace Ajsuth.Foundation.Minions.Engine.Pipelines.Blocks
 			};
 			entityView.ChildViews.Add(minionsDashboardView);
 
-			return Task.FromResult(entityView);
+			return await Task.FromResult(entityView).ConfigureAwait(false);
 		}
     }
 }
