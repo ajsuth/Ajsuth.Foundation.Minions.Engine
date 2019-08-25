@@ -13,6 +13,10 @@ The current code base is XC 9.1 and hasn't been tested on other XC versions.
 The ``/commerceops/RunningMinions()`` returns a list of minion policies for minions that are currently running.
 ![Running Minions API](/images/running-minions-api.png)
 
+### Environment Minions API
+The ``/commerceops/EnvironmentMinions()`` returns a list of minion policies for the environment.
+![Running Minions API](/images/environment-minions-api.png)
+
 ### Minions Dashboard
 Provides an overview of minions. Last run time details will render for custom minions. See [Updating Minions to obtain run time data](#updating-minions-to-obtain-run-time-data).
 ![Minions Dashboard](/images/minions-dashboard.png)
@@ -109,19 +113,18 @@ To track the last run time data of a minion, the minion will need to be overridd
 1. Create a new minion in your solution, inheriting from the desired minion if it's not custom.
 2. Add the following using statement to the minion class
 
-``using Ajsuth.Foundation.Minions.Engine.Models;``
+``using Ajsuth.Foundation.Minions.Engine.FrameworkExtensions;``
 
 3. Override the ``Process()`` method, adding the following code to the beginning of the method.
 
 ```
 public override async Task<MinionRunResultsModel> Process()
 {
-	var minionRunModel = new MinionRunModel();
-	this.Policy.Models.RemoveAll(m => m is MinionRunModel);
-	this.Policy.Models.Add(minionRunModel);
+	this.Policy.ClearRunModels();
+	this.Policy.CreateRunModel();
 	if (!(await this.ShouldProcess().ConfigureAwait(false)))
 	{
-		return new MinionRunResultsModel();
+		return this.Policy.CurrentRunModel();
 	}
 
 	this.Environment.AddRunningMinion(this);
@@ -147,8 +150,7 @@ protected override async Task<bool> ShouldProcess()
 				new object[] { this.Policy.FullyQualifiedName, this.Environment.Name, this.Policy.ListToWatch },
 				message)
 			.ConfigureAwait(false);
-		var minionRunModel = this.Policy.Models.FirstOrDefault(m => m is MinionRunModel) as MinionRunModel;
-		minionRunModel.RunComplete("Complete", message);
+		this.Policy.CurrentRunModel().Abort(message);
 
 		return false;
 	}
@@ -165,8 +167,7 @@ protected override async Task<bool> ShouldProcess()
 				new object[] { this.Policy.FullyQualifiedName, this.Environment.Name },
 				message)
 			.ConfigureAwait(false);
-		var minionRunModel = this.Policy.Models.FirstOrDefault(m => m is MinionRunModel) as MinionRunModel;
-		minionRunModel.RunComplete("Complete", message);
+		this.Policy.CurrentRunModel().Abort(message);
 
 		return false;
 	}
@@ -177,11 +178,25 @@ protected override async Task<bool> ShouldProcess()
 
 5. Override the ``Execute()`` method, inserting the following at the beginning of the method.
 
-``var minionRunModel = this.Policy.Models.FirstOrDefault(m => m is MinionRunModel) as MinionRunModel;``
+``var minionRunModel = this.Policy.CurrentRunModel();``
 
-6. Add the ``minionRunModel.RunComplete()`` method wherever the minion returns the ``MinionRunResultsModel``, providing the appropriate status and message. e.g.
+6. Wherever the minion returns the ``MinionRunResultsModel``, replace this with ``minionRunModel``, preceded with one of the following methods:
 
-``minionRunModel.RunComplete("Complete", "Minion completed successfully");``
+```
+minionRunModel.Complete(message);
+```
+
+```
+minionRunModel.Complete(message, itemsProcessed);
+```
+
+```
+minionRunModel.Abort(message);
+```
+
+```
+minionRunModel.Error(message, hasMoreItems, didRun (default = false));
+```
 
 7. For minions running batches, update the ``ItemsProcessed`` property to align with the count for the ``MinionRunResultsModel``. e.g.
 
@@ -199,7 +214,6 @@ minionRunModel.ItemsProcessed += entitiesToIndex.Count;
 | Feature                 | Description | Issue |
 | ----------------------- | ----------- | ----- |
 | Add/Edit/Delete Minion Actions     | Original code migrated from 9.0.2, which hasn't been updated or verified. | N/A |
-| Last Run Lapsed Time     | Last Run Lapsed Time not rendering current lapsed time for in progress minion. | N/A |
 
 ## Disclaimer
 The code provided in this repository is sample code only. It is not intended for production usage and not endorsed by Sitecore.
