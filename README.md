@@ -1,13 +1,26 @@
 # Extended Sitecore Commerce Minions
 A custom plugin to extend minions functionality in Sitecore Experience Commerce.
 
-** WARNING **
-This solution has been adapted from a P.o.C. from XC 9.0.2. and is still a work in progress.
+- [Supported Sitecore Experience Commerce Versions](#supported-sitecore-experience-commerce-versions)
+- [Features](#features)
+- [Installation Instructions (API Only)](#installation-instructions-api-only)
+- [Installation Instructions (Extended Run Time Properties)](#installation-instructions-extended-run-time-properties)
+- [Installation Instructions (BizFx Module)](#installation-instructions-bizfx-module)
+- [Known Issues](#known-issues)
+- [Disclaimer](#disclaminer)
 
 ## Supported Sitecore Experience Commerce Versions
-The current code base is XC 9.1 and hasn't been tested on other XC versions.
+- XC 9.2
+- XC 9.1 (Go here for XC 9.1 documentation)
 
 ## Features
+
+- [Running Minions API](#running-minions-api)
+- [Environment Minions API](#environment-minions-api)
+- [Extended Minion Run Time Properties](#extended-minion-run-time-properties)
+- [Improved Logging For Blocked Minions](#improved-logging-for-blocked-minions)
+- [Minions Dashboard](#minions-dashboard)
+- [Running Minions Entity View](#running-minions-entity-view)
 
 ### Running Minions API
 The ``/commerceops/RunningMinions()`` returns a list of minion policies for minions that are currently running.
@@ -16,6 +29,15 @@ The ``/commerceops/RunningMinions()`` returns a list of minion policies for mini
 ### Environment Minions API
 The ``/commerceops/EnvironmentMinions()`` returns a list of minion policies for the environment.
 ![Running Minions API](/images/environment-minions-api.png)
+
+### Extended Minion Run Time Properties
+The ``MinionRunModel`` captures additional data for the last minion execution for display in the Running Minions and Minons Dashboard entity views.
+
+**Note:** Currently only the last execution data is captured to avoid a memory leak.
+
+### Improved Logging For Blocked Minions
+When a minion is blocked due to another minion utilising the same commerce entities, the logged message provides the name of the blocking minion. e.g.
+> "Minion 'Sitecore.Commerce.Plugin.Search.IncrementalIndexMinion, Sitecore.Commerce.Plugin.Search' (ListToWatch: CatalogItemsIndex) didn't run. Minion 'Sitecore.Commerce.Plugin.Search.FullIndexMinion, Sitecore.Commerce.Plugin.Search' (ListToWatch: CatalogItems) is processing the same type of entities (Sitecore.Commerce.Plugin.Catalog.Catalogs, Sitecore.Commerce.Plugin.Catalog,Sitecore.Commerce.Plugin.Catalog.Category, Sitecore.Commerce.Plugin.Catalog,Sitecore.Commerce.Plugin.Catalog.SellableItem, Sitecore.Commerce.Plugin.Catalog) in the 'HabitatMinions' environment running."
 
 ### Minions Dashboard
 Provides an overview of minions. Last run time details will render for custom minions. See [Updating Minions to obtain run time data](#updating-minions-to-obtain-run-time-data).
@@ -32,82 +54,20 @@ Added minion actions
 
 ![Minion Dashboard Actions](/images/minion-dashboard-actions.png)
 
-### Extended Minion Run Time Properties
-The ``MinionRunModel`` captures additional data for the last minion execution for display in the Running Minions and Minons Dashboard entity views.
-
-**Note:** The ``MinionRunModel`` is intended to replace the ``MinionRunResultsModel``. _Early P.o.C. days._
-
-**Note:** Currently only the last execution data is captured to avoid a memory leak.
-
-## Installation Instructions
-
-### Creating a BizFx website for Minions
-The Business Tools (Bizfx) website that is installed with via SIF and ARM templates is intended for the Authoring environment for merchandisers. This doesn't prevent its usage as a GUI for Dev Ops operations and Minions management. In order to run BizFx under the Minions environment, a separate BizFx website is required. The following instructions are provided for local IIS setup under the XP0 installation.
-
-1. In IIS, create a new the BizFx website, copying the original BizFx website configuration.
-2. Configure the Bindings for the the new website as desired. e.g.
-
-| Website | Bindings |
-| ------- | -------- |
-| BizFx for Authoring | https://localhost:4200 \| https://bizfx.XC91.local  |
-| BizFx for Minions   | https://localhost:4300 \| https://bizfx.XC91m.local |
-
-3. Update the Hosts file with the binding
-4. Ensure the application pool is configured to match the Authoring BizFx application pool.
-5. Either copy the BizFx website folder or deploy from the SDK.
-6. Update the BizFx configuration in \Assets\config.json e.g.
-
-| Setting | Example |
-| ------- | ------- |
-| EnvironmentName | HabitatMinions |
-| EngineUri | https://commerceminions.XC91.local |
-| BizFxUri | https://bizfx.XC91m.local |
-
-### Update Identity Server Configuration
-1. Update the Identity Server configuration in \Config\production\Sitecore.Commerce.IdentityServer.Host.xml with the site bindings e.g.
-1.a. Append localhost bindings to AllowedCorsOriginsGroup1 e.g.
-
-``<AllowedCorsOriginsGroup1>...|http://localhost:4300|https://localhost:4300</AllowedCorsOriginsGroup1>``
-
-1.b. Append the minions commerce engine and BizFx Uris to engineAllowedCorsOriginsGroup2 e.g.
-
-``<AllowedCorsOriginsGroup2>...|https://bizfx.XC91m.local|https://commerceminions.XC91.local</AllowedCorsOriginsGroup2>``
+## Installation Instructions (API Only)
 
 ### Adding the plugin to your solution
 1. Download the repository.
 2. Add the **Ajsuth.Foundation.Minions.Engine.csproj** to the _**Sitecore Commerce Engine**_ solution.
 3. In the _**Sitecore Commerce Engine**_ project, add a reference to the **Ajsuth.Foundation.Minions.Engine** project.
-4. Add the following to the _**AccessByRole**_ policy set
+4. Deploy the solution and run from IIS.
 
-``{
-	"$type": "Sitecore.Commerce.EntityViews.ActionRoleModel, Sitecore.Commerce.Plugin.Views",
-	"View": "MinionsDashboard",
-	"Role": "sitecore\\Dev Ops Manager"
-}``
+## Installation Instructions (Extended Run Time Properties)
 
-5. Add the following to the _**Minions**_ environment policy set
-
-``{
-	"$type": "Sitecore.Commerce.EntityViews.ActionRoleModel, Sitecore.Commerce.Plugin.Views",
-	"View": "MinionsDashboard",
-	"Role": "sitecore\\Dev Ops Manager"
-}``
-
-6. Deploy the solution and run from IIS.
-7. Run the **Bootstrap** command on the _**Sitecore Commerce Engine**_. 
-8. Restart all commerce engine websites.
-
-### Configuring Roles in Sitecore for Minions
-The Minions dashboard is only intended to be visible within BizFx under the Minions environment. Although this configuration is handled via the access roles configured in the Commerce Engine solution, the roles need to be configured in Sitecore. A new Dev Ops Adminstrator role will be created.
-
-In Sitecore, go to the Role Manager
-1. Create Role **Dev Ops Administrator** in the _sitecore_ domain.
-2. Set the role to be a member of **sitecore\Commerce Business User**.
-3. Create or update a _User_ account with the **Dev Ops Administrator** role.
-
-**Note:** Until I customise the Business Tools to extend the **AccessByRole** with environment filters it is advised to not assign the primary **Administrator** role as a member of the **Dev Ops Administrator** role simply to avoid the Minions Dashboard from showing in the Authoring BizFx site.
+**Prerequisites:** [Installation Instructions (API Only)](#installation-instructions-api-only).
 
 ### Updating Minions to obtain run time data
+
 To track the last run time data of a minion, the minion will need to be overridden in your solution. The following instructions provides a guide for capturing this data.
 
 1. Create a new minion in your solution, inheriting from the desired minion if it's not custom.
@@ -127,11 +87,33 @@ public override async Task<MinionRunResultsModel> Process()
 		return this.Policy.CurrentRunModel();
 	}
 
-	this.Environment.AddRunningMinion(this);
-	var result = await this.Execute().ConfigureAwait(false);
-	this.Environment.RemoveRunningMinion(this);
+	if (!this.Environment.AddRunningMinion(this))
+	{
+		return this.Policy.CurrentRunModel();
+	}
 
-	return result;
+	MinionRunModel runModel;
+	try
+	{
+		var result = await this.Execute().ConfigureAwait(false);
+		if (this.ShouldDispose)
+		{
+			this.Logger.LogInformation($"Disposing of minion '{this.Policy.FullyQualifiedName}|{this.Policy.ListToWatch}|{this.Environment.Name}' after finishing executing.");
+			this.Dispose();
+		}
+
+		return result;
+	}
+	catch(MinionExecutionException ex)
+	{
+		runModel = this.Policy.CurrentRunModel();
+		runModel.Abort(ex.Message);
+		return runModel;
+	}
+	finally
+	{
+		this.Environment.RemoveRunningMinion(this);
+	}
 }
 ```
 
@@ -141,10 +123,10 @@ public override async Task<MinionRunResultsModel> Process()
 protected override async Task<bool> ShouldProcess()
 {
 	// minion with the same configuration
-	if (this.Environment.RunningMinions.FirstOrDefault(p => p == this.Policy) != null)
+	if (this.Environment.RunningMinions.FirstOrDefault(p => p.FullyQualifiedName.Equals(this.Policy.FullyQualifiedName, StringComparison.OrdinalIgnoreCase) && p.ListToWatch.Equals(this.Policy.ListToWatch, StringComparison.OrdinalIgnoreCase)) != null)
 	{
 		var message = $"Minion '{this.Policy.FullyQualifiedName}' didn't run. There is already an instance of this minion running in the '{this.Environment.Name}' environment and watching the list '{this.Policy.ListToWatch}'.";
-		await this.GlobalContext.AddMessage(
+		await this.MinionContext.AddMessage(
 				this.Environment.GetPolicy<KnownResultCodes>().Warning,
 				"MinionAlreadyRunning",
 				new object[] { this.Policy.FullyQualifiedName, this.Environment.Name, this.Policy.ListToWatch },
@@ -161,7 +143,7 @@ protected override async Task<bool> ShouldProcess()
 	{
 		var entities = string.Join(",", runningMinion.Entities.Intersect(this.Policy.Entities));
 		var message = $"Minion '{this.Policy.FullyQualifiedName}' (ListToWatch:{this.Policy.ListToWatch}) didn't run. Minion '{runningMinion.FullyQualifiedName}' (ListToWatch:{runningMinion.ListToWatch}) is processing the same type of entities ({entities}) in the '{this.Environment.Name}' environment running.";
-		await this.GlobalContext.AddMessage(
+		await this.MinionContext.AddMessage(
 				this.Environment.GetPolicy<KnownResultCodes>().Warning,
 				"MinionProcessingSameEntities",
 				new object[] { this.Policy.FullyQualifiedName, this.Environment.Name },
@@ -201,14 +183,118 @@ minionRunModel.Error(message, hasMoreItems, didRun (default = false));
 7. For minions running batches, update the ``ItemsProcessed`` property to align with the count for the ``MinionRunResultsModel``. e.g.
 
 ```
-indexedItemsCount += entitiesToIndex.Count;
-minionRunModel.ItemsProcessed += entitiesToIndex.Count;
+indexedItemsCount += entitiesToIndex.Items.Count;
+minionRunModel.ItemsProcessed += entitiesToIndex.Items.Count;
 ```
 
-8. Update the minion configuration in the _**Minions**_ policy set.
+8. Update the minion configuration in the _**Minions**_ policy set to replace the original minion with the custom minion or insert the new minion.
 9. Deploy the solution
 10. Run Bootstrap
 11. Restart the Minions Commerce Engine.
+
+### Update the Commerce Term
+1. In **Sitecore Client**, go to the **Content Editor**.
+2. Navigate to ``/sitecore/Commerce/Commerce Control Panel/Commerce Engine Settings/Commerce Terms/System Messages/MinionProcessingSameEntities``.
+3. Update the **Value** field to ``Minion '{0}' (ListToWatch: {1}) didn't run. Minion '{2}' (ListToWatch: {3}) is processing the same type of entities ({4}) in the '{5}' environment running.``
+
+
+## Installation Instructions (BizFx Module)
+
+**Prerequisites:** [Installation Instructions (API Only)](#installation-instructions-api-only) and [Installation Instructions (Extended Run Time Properties)](#installation-instructions-extended-run-time-properties).
+
+### Creating a BizFx website for Minions
+The Business Tools (Bizfx) website that is installed with via SIF and ARM templates is intended for the Authoring environment for merchandisers. This doesn't prevent its usage as a GUI for Dev Ops operations and Minions management. In order to run BizFx under the Minions environment, a separate BizFx website is required. The following instructions are provided for local IIS setup under the XP0 installation.
+
+1. In IIS, create a new the BizFx website, copying the original BizFx website configuration.
+2. Configure the Bindings for the the new website as desired. e.g.
+
+| Website | Bindings |
+| ------- | -------- |
+| BizFx for Authoring | https://localhost:4200 \| https://bizfx.authoring.local  |
+| BizFx for Minions   | https://localhost:4300 \| https://bizfx.minions.local |
+
+3. Update the Hosts file with the binding
+4. Ensure the application pool is configured to match the Authoring BizFx application pool.
+5. Either copy the BizFx website folder or deploy from the SDK.
+6. Update the BizFx configuration in ``\Assets\config.json`` e.g.
+
+| Setting | Example |
+| ------- | ------- |
+| EnvironmentName | HabitatMinions |
+| EngineUri | https://commerceminions.XC92.local |
+| BizFxUri | https://bizfx.minions.local |
+
+### Update Identity Server Configuration
+1. Update the Identity Server configuration in ``\Config\production\Sitecore.Commerce.IdentityServer.Host.xml`` with the site bindings e.g.
+1.a. Append localhost bindings to ``AllowedCorsOriginsGroup1`` e.g.
+
+``<AllowedCorsOriginsGroup1>...|http://localhost:4300|https://localhost:4300</AllowedCorsOriginsGroup1>``
+
+1.b. Append the minions commerce engine and BizFx Uris to ``AllowedCorsOriginsGroup2`` e.g.
+
+``<AllowedCorsOriginsGroup2>...|https://bizfx.minions.local|https://commerceminions.XC92.local</AllowedCorsOriginsGroup2>``
+
+### Configuring the solution
+1. In the **Sitecore Commerce Engine** project, open ``\boostrap\Global.json`` and update the EnvironmentBusinessToolsPolicy to include the _Minions_ environment. e.g.
+
+```
+{
+	"$type": "Sitecore.Commerce.Plugin.BusinessUsers.EnvironmentBusinessToolsPolicy,Sitecore.Commerce.Plugin.BusinessUsers",
+	"EnvironmentList": {
+		"$type": "System.Collections.Generic.List`1[[System.String, mscorlib]], mscorlib",
+		"$values": [
+			"HabitatAuthoring",
+			"HabitatShops",
+			"HabitatMinions"
+		]
+	}
+}
+```
+
+2. In ``\data\config.json``, update the AllowedOrigins to include the minions BizFx URIs, e.g.
+
+```
+"AllowedOrigins": [
+	"https://localhost:4200",
+	"https://localhost:4300",
+	"https://bizfx.authoring.local",
+	"https://bizfx.minions.local",
+	"https://sxa.storefront.com"
+]
+```
+
+3. Add the following to the _**AccessByRole**_ policy set
+
+```
+{
+	"$type": "Sitecore.Commerce.EntityViews.ActionRoleModel, Sitecore.Commerce.Plugin.Views",
+	"View": "MinionsDashboard",
+	"Role": "sitecore\\Dev Ops Administrator"
+}
+```
+
+4. Add the following to the _**Minions**_ environment policy set
+
+```
+{
+	"$type": "Sitecore.Commerce.Core.PolicySetPolicy, Sitecore.Commerce.Core",
+	"PolicySetId": "Entity-PolicySet-AccessByRolesPolicySet"
+}
+```
+
+5. Deploy the solution and run from IIS.
+6. Run the **Bootstrap** command on the _**Sitecore Commerce Engine**_. 
+7. Restart all commerce engine websites.
+
+### Configuring Roles in Sitecore for Minions
+The Minions dashboard is only intended to be visible within BizFx under the Minions environment. Although this configuration is handled via the access roles configured in the Commerce Engine solution, the roles need to be configured in Sitecore. A new Dev Ops Adminstrator role will be created.
+
+In **Sitecore Client**, go to the **Role Manager**.
+1. Create Role **Dev Ops Administrator** in the _sitecore_ domain.
+2. Set the role to be a member of **sitecore\Commerce Business User**.
+3. Create or update a _User_ account with the **Dev Ops Administrator** role.
+
+**Note:** Until the Business Tools is customised to extend the **AccessByRole** with environment filters it is advised to not assign the primary **Administrator** role as a member of the **Dev Ops Administrator** role, simply to avoid the Minions Dashboard from showing in the Authoring BizFx site.
 
 ## Known Issues
 | Feature                 | Description | Issue |
